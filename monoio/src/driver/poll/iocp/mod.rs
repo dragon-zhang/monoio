@@ -1,13 +1,14 @@
 mod afd;
-mod core;
 mod event;
 mod state;
 mod waker;
 
-pub use core::*;
 use std::{
     collections::VecDeque,
-    os::windows::prelude::RawSocket,
+    os::windows::{
+        io::{AsRawHandle, RawHandle},
+        prelude::RawSocket,
+    },
     pin::Pin,
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -24,6 +25,8 @@ use windows_sys::Win32::{
     Foundation::WAIT_TIMEOUT,
     System::IO::{OVERLAPPED, OVERLAPPED_ENTRY},
 };
+
+pub use crate::driver::iocp::*;
 
 pub struct Poller {
     is_polling: AtomicBool,
@@ -229,7 +232,7 @@ impl Poller {
         const POLL_GROUP__MAX_GROUP_SIZE: usize = 32;
 
         let mut afd_group = self.afd.lock().unwrap();
-        if afd_group.len() == 0 {
+        if afd_group.is_empty() {
             self._alloc_afd_group(&mut afd_group)?;
         } else {
             // + 1 reference in Vec
@@ -283,6 +286,12 @@ impl Drop for Poller {
 
         let mut afd_group = self.afd.lock().unwrap();
         afd_group.retain(|g| Arc::strong_count(g) > 1);
+    }
+}
+
+impl AsRawHandle for Poller {
+    fn as_raw_handle(&self) -> RawHandle {
+        self.cp.as_raw_handle()
     }
 }
 

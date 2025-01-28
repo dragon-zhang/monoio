@@ -7,7 +7,7 @@ use std::os::windows::io::{
 use std::{cell::UnsafeCell, io, rc::Rc};
 
 #[cfg(windows)]
-use super::legacy::iocp::SocketState as RawFd;
+use super::poll::iocp::SocketState as RawFd;
 use super::CURRENT;
 
 // Tracks in-flight operations on a file descriptor. Ensures all in-flight
@@ -449,6 +449,7 @@ impl SharedFd {
         }
     }
 
+    #[allow(unused_variables)]
     #[cfg(feature = "poll-io")]
     #[inline]
     pub(crate) fn cvt_poll(&mut self) -> io::Result<()> {
@@ -460,6 +461,7 @@ impl SharedFd {
         r
     }
 
+    #[allow(unused_variables)]
     #[cfg(feature = "poll-io")]
     #[inline]
     pub(crate) fn cvt_comp(&mut self) -> io::Result<()> {
@@ -573,6 +575,7 @@ fn drop_legacy(mut fd: RawFd, idx: Option<usize>) {
     let _ = unsafe { OwnedSocket::from_raw_socket(fd.socket) };
 }
 
+#[allow(unused_variables)]
 #[cfg(feature = "poll-io")]
 fn drop_uring_legacy(fd: RawFd, idx: Option<usize>) {
     if CURRENT.is_set() {

@@ -45,6 +45,7 @@ windows-sys = { version = "0.48.0", features = [
     "Win32_System_IO",
     "Win32_Storage_FileSystem",
     "Win32_Security",
+    "Win32_System_Console",
 ] }
 
 # unix dependencies
@@ -87,7 +88,7 @@ utils = ["nix"]
 # enable debug if you want to know what runtime does
 debug = ["tracing"]
 # enable legacy driver support(will make monoio available for older kernel and macOS)
-legacy = ["mio"]
+legacy = ["poll-io"]
 # iouring support
 iouring = ["io-uring"]
 # tokio-compatible(only have effect when legacy is enabled and iouring is not)

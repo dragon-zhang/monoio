@@ -22,6 +22,7 @@ mod scheduler;
 pub mod time;
 
 extern crate alloc;
+extern crate core;
 
 #[cfg(feature = "sync")]
 pub mod blocking;
